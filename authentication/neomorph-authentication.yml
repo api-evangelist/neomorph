@@ -1,0 +1,100 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live anonymous probes of https://neomorph.com/wp-json (route index + per-route OPTIONS
+  descriptors) on 2026-08-26, cross-read against the ten OpenAPI documents in openapi/.
+summary:
+  types: []
+  api_key_in: []
+  oauth2_flows: []
+  public_read: true
+note: >-
+  Every operation catalogued in this repo is anonymously readable and declares no security scheme.
+  Neomorph publishes no developer authentication documentation because it runs no developer program;
+  the read surface is simply open. The deployment's own REST index DOES advertise one authentication
+  provider for discovery — WordPress application passwords, with an authorization endpoint at
+  https://neomorph.com/wp-admin/authorize-application.php — but that is the CMS admin credential flow
+  for the site's own editors, not a developer-facing credential Neomorph issues to third parties. It
+  is recorded below because it is what the deployment says about itself, not because it is an offered
+  API program. Application passwords are carried over HTTP Basic; the deployment also advertises
+  X-WP-Nonce in Access-Control-Allow-Headers for cookie-authenticated same-origin browser calls.
+schemes: []
+site_declared_authentication:
+  provider: wordpress-application-passwords
+  transport: HTTP Basic (username + application password)
+  authorization_endpoint: https://neomorph.com/wp-admin/authorize-application.php
+  source_field: authentication (root of https://neomorph.com/wp-json/)
+  audience: site administrators and editors, not third-party developers
+  note: >-
+    Not exercised. The pipeline reads anonymously only and holds no credential for this deployment.
+  additional_credential_headers_advertised:
+  - Authorization
+  - X-WP-Nonce
+anonymous_access:
+  readable:
+  - GET /
+  - GET /wp/v2/posts
+  - GET /wp/v2/posts/{id}
+  - GET /wp/v2/pages
+  - GET /wp/v2/pages/{id}
+  - GET /wp/v2/media
+  - GET /wp/v2/media/{id}
+  - GET /wp/v2/categories
+  - GET /wp/v2/categories/{id}
+  - GET /wp/v2/tags
+  - GET /wp/v2/comments
+  - GET /wp/v2/resource
+  - GET /wp/v2/resource/{id}
+  - GET /wp/v2/team
+  - GET /wp/v2/team/{id}
+  - GET /wp/v2/team_category
+  - GET /wp/v2/team_category/{id}
+  - GET /wp/v2/blocks
+  - GET /wp/v2/search
+  - GET /wp/v2/types
+  - GET /wp/v2/taxonomies
+  - GET /wp/v2/statuses
+  - GET /oembed/1.0/embed
+  gated:
+  - path: /wp/v2/users
+    status: 403
+    code: null
+    note: >-
+      Blocked at the edge, not by the REST layer — the response is an HTML "Forbidden Access" page
+      from the site's WAF (WP Defender), not a JSON WP_Error envelope. This is the only gated route
+      on the deployment that does not answer in JSON.
+  - path: /wp/v2/settings
+    status: 401
+    code: rest_forbidden
+  - path: /wp/v2/menu-items
+    status: 401
+    code: rest_cannot_view
+  - path: /wp/v2/block-types
+    status: 401
+    code: rest_block_type_cannot_view
+  - path: /wp/v2/elementor_library
+    status: 401
+    code: rest_forbidden
+  - path: /wp-abilities/v1/abilities
+    status: 401
+    code: rest_forbidden
+    note: >-
+      The WordPress Abilities API is registered on this deployment. It is the agent-facing capability
+      registry WordPress ships for MCP-style tool exposure, and it is entirely auth-gated here — no
+      ability names, descriptions or input schemas are readable anonymously.
+  - path: /wp-abilities/v1/categories
+    status: 401
+    code: rest_forbidden
+  write_operations: >-
+    Every POST/PUT/PATCH/DELETE route in the 432-route index requires an authenticated WordPress user.
+    None were exercised — the pipeline reads only.
+x-evidence:
+  probed: '2026-08-26'
+  index: https://neomorph.com/wp-json/
+  index_size_bytes: 649729
+  routes: 432
+  namespaces: 23
+  index_authentication_field:
+    application-passwords:
+      endpoints:
+        authorization: https://neomorph.com/wp-admin/authorize-application.php

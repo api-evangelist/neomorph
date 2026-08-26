@@ -1,0 +1,210 @@
+openapi: 3.2.0
+info:
+  title: Neomorph Discovery API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind neomorph.com.
+  description: The read-only content surface Neomorph exposes at https://neomorph.com/wp-json. Neomorph,
+    Inc. is a venture-backed, clinical-stage biotechnology company at 5590 Morehouse Drive in San Diego,
+    California, founded in 2020 to design molecular glue degraders that reshape E3 ubiquitin ligases into
+    neomorphic surfaces and eliminate previously undruggable proteins. It runs no developer program and
+    markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and
+    `oembed/1.0` routes the site publishes, restricted to the operations verified to return data anonymously
+    on 2026-08-26. See x-api-evangelist-provenance.
+  contact:
+    name: Neomorph, Inc.
+    url: https://neomorph.com/contact/
+  x-api-evangelist-provenance: Derived by the API Evangelist enrichment pipeline from the live WordPress
+    REST route index at https://neomorph.com/wp-json/ (432 routes across 23 namespaces) and from the per-route
+    OPTIONS descriptors that deployment returns, verified against live anonymous responses on 2026-08-26.
+    Every parameter and every response property below appears verbatim in that deployment's own route/schema
+    descriptors, and every collection count in a description was read from the X-WP-Total response header
+    on that date. Neomorph publishes no OpenAPI, no developer portal and no API reference for this surface;
+    the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract.
+    Write operations and every authenticated route (/wp/v2/users, /wp/v2/settings, /wp/v2/menu-items,
+    /wp/v2/block-types, /wp/v2/elementor_library, the wp-abilities/v1 namespace and the whole plugin-administration
+    surface) are deliberately excluded - they were probed anonymously and returned 401/403. Nothing here
+    was obtained with credentials.
+servers:
+- url: https://neomorph.com/wp-json
+  description: Production content API
+tags:
+- name: Discovery
+  description: Route, type, taxonomy and status discovery documents. These are the machine-readable index
+    of the deployment and are anonymously readable in full.
+paths:
+  /:
+    get:
+      tags:
+      - Discovery
+      operationId: getIndex
+      summary: Get the REST API index
+      description: Returns the deployment's own route index - site name, url, home, gmt_offset, the list
+        of registered namespaces, an `authentication` block, and a `routes` map describing every registered
+        route with its methods, args and endpoints. On 2026-08-26 this document was 649,729 bytes and
+        described 432 routes across 23 namespaces; its `authentication` field advertises WordPress application
+        passwords with an authorization endpoint at https://neomorph.com/wp-admin/authorize-application.php.
+      parameters:
+      - name: namespace
+        in: query
+        description: Restrict the index to a single namespace.
+        schema:
+          type: string
+      - name: context
+        in: query
+        description: Scope under which the request is made.
+        schema:
+          type: string
+          enum:
+          - view
+          - help
+          - embed
+          default: view
+      responses:
+        '200':
+          description: The REST API index.
+          content:
+            application/json:
+              schema:
+                type: object
+  /wp/v2/types:
+    get:
+      tags:
+      - Discovery
+      operationId: listTypes
+      summary: List post types
+      description: Lists every registered post type with its rest_base, taxonomies and labels. 17 types
+        were registered on 2026-08-26, of which `team` (Team) and `resource` (Resources) are the two custom
+        types that carry Neomorph's own content.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: List post types.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+  /wp/v2/taxonomies:
+    get:
+      tags:
+      - Discovery
+      operationId: listTaxonomies
+      summary: List taxonomies
+      description: 'Lists every registered taxonomy with its rest_base and the types it applies to. Five
+        were registered on 2026-08-26: category, post_tag, nav_menu, wp_pattern_category and the custom
+        team_category.'
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: type
+        in: query
+        description: Limit results to taxonomies associated with a specific post type.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List taxonomies.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+  /wp/v2/statuses:
+    get:
+      tags:
+      - Discovery
+      operationId: listStatuses
+      summary: List post statuses
+      description: Lists the post statuses visible in this context. Anonymously this returns `publish`
+        only.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: List post statuses.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+components:
+  schemas:
+    Error:
+      type: object
+      title: WP_Error
+      description: The WordPress REST error envelope. It is NOT RFC 9457 application/problem+json; it
+        is served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+            params:
+              type: object
+              description: Per-parameter validation messages, on 400.
+            details:
+              type: object
+              description: Per-parameter validation detail, on 400.
+      required:
+      - code
+      - message
+  responses:
+    InvalidParam:
+      description: Invalid parameter. Returns `rest_invalid_param` with a per-parameter breakdown in `data.params`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: 'Authentication required. Returns `rest_forbidden` (or a route-specific slug) with
+        `data.status: 401`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: 'No route or resource matched. Returns `rest_no_route` or a `rest_*_invalid_id` slug
+        with `data.status: 404`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

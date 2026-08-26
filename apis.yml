@@ -1,18 +1,279 @@
 aid: neomorph
 name: Neomorph
-description: 'Neomorph is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Neomorph, Inc. is a venture-backed, clinical-stage biotechnology company headquartered at 5590
+  Morehouse Drive in San Diego, California, founded in 2020 to design molecular glue degraders —
+  small molecules that bind an E3 ubiquitin ligase, reshape it into a new "neomorphic" surface, and
+  recruit disease-causing proteins to the proteasome for destruction. The approach targets the
+  roughly 85% of the human proteome considered undruggable by conventional small molecules because
+  it needs no traditional binding pocket. Neomorph's platform reaches beyond cereblon to hundreds of
+  E3 ligases and multiple proprietary degrons, which the company describes as the largest proprietary
+  molecular glue target space in the field. Its lead programme, NEO-811, targets ARNT/HIF-1β in
+  clear cell renal cell carcinoma and entered a Phase 1/2 trial in February 2026; the rest of the
+  pipeline spans undisclosed solid tumors plus partnered oncology/immunology, neurology and
+  cardiometabolic/rare disease targets. The company closed a $109 million Series A in December 2020
+  and a $100 million Series B in April 2026, and runs multi-target discovery collaborations with Novo
+  Nordisk (February 2024), Biogen (October 2024) and AbbVie (January 2025). Philip Chamberlain, DPhil
+  is CEO and Robert J. Hugin was appointed Chairman of the Board in May 2026. Neomorph runs no
+  developer program and publishes no product API, developer portal, API reference, SDK or pricing.
+  The only machine-readable surface reachable without credentials is the WordPress REST content API
+  behind neomorph.com, catalogued here.
+image: https://neomorph.com/wp-content/uploads/2026/03/OG-Neomorph.png
 url: https://raw.githubusercontent.com/api-evangelist/neomorph/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
-specificationVersion: '0.20'
+x-tier: profiled
+x-tier-reason: enriched
+specificationVersion: '0.23'
 created: '2026-08-26'
 modified: '2026-08-26'
 tags:
 - Company
-apis: []
+- Biotechnology
+- Pharmaceuticals
+- Drug Discovery
+- Targeted Protein Degradation
+- Molecular Glue
+- Oncology
+- Immunology
+- Rare Disease
+- Clinical Trials
+- Life Sciences
+- content-api
+tags_raw:
+- Company
+- biotechnology
+- pharmaceuticals
+- drug-discovery
+- targeted-protein-degradation
+- molecular-glue
+- oncology
+- immunology
+- rare-disease
+- clinical-trials
+- life-sciences
+- content-api
+apis:
+- aid: neomorph:neomorph-news-api
+  name: Neomorph News API
+  description: >-
+    News archive — Neomorph press releases and media coverage (14 published at harvest time, spanning
+    the December 2020 $109M Series A through the May 2026 appointment of Robert J. Hugin as Chairman
+    of the Board).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Posts
+  tags_raw:
+  - posts
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-news-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-pages-api
+  name: Neomorph Pages API
+  description: >-
+    Corporate pages — About, Platform, Pipeline, Publications, Patients, Careers, News, Contact and the
+    policy set (15 published at harvest time, including the NEO-811 programme page).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Pages
+  tags_raw:
+  - pages
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-pages-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-publications-api
+  name: Neomorph Publications API
+  description: >-
+    Publications custom post type — the peer-reviewed molecular glue and targeted protein degradation
+    literature Neomorph's founders and scientists authored (11 published at harvest time, from the 2014
+    CRBN–DDB1–thalidomide structure through the 2022 CELMoD cereblon conformation paper).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Publications
+  tags_raw:
+  - publications
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-publications-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-team-api
+  name: Neomorph Team API
+  description: >-
+    Team custom post type and its team_category taxonomy — management, board of directors and
+    scientific founders (19 people across 4 registered categories at harvest time).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Team
+  tags_raw:
+  - team
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-team-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-media-api
+  name: Neomorph Media API
+  description: >-
+    Media library — team portraits, pipeline and platform figures, and press assets (111 attachments at
+    harvest time).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Media
+  tags_raw:
+  - media
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-media-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-taxonomy-api
+  name: Neomorph Taxonomy API
+  description: >-
+    News categories and tags. Two category terms are registered (Press Release, In The Media); the
+    post_tag taxonomy is registered but empty.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Taxonomy
+  tags_raw:
+  - taxonomy
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-taxonomy-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-comments-api
+  name: Neomorph Comments API
+  description: >-
+    Comment collection. Registered and anonymously reachable, but empty — no post on this deployment
+    carries comments.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Comments
+  tags_raw:
+  - comments
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-comments-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-search-api
+  name: Neomorph Search API
+  description: >-
+    Cross-content search across every publicly queryable object type on the deployment (post, page,
+    team, resource).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Search
+  tags_raw:
+  - search
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-search-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-discovery-api
+  name: Neomorph Discovery API
+  description: >-
+    Route, post-type, taxonomy and status discovery documents — the 432-route, 23-namespace index the
+    deployment publishes about itself.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Discovery
+  tags_raw:
+  - discovery
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-discovery-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-oembed-api
+  name: Neomorph oEmbed API
+  description: oEmbed 1.0 provider endpoint for neomorph.com permalinks.
+  humanURL: https://oembed.com/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - oEmbed
+  tags_raw:
+  - oembed
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-oembed-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +281,65 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
+  url: https://neomorph.com/
+- type: About
+  url: https://neomorph.com/about-us/
+- type: Platform
+  url: https://neomorph.com/platform/
+- type: Pipeline
+  url: https://neomorph.com/pipeline/
+- type: Publications
+  url: https://neomorph.com/publications/
+- type: PatientResources
+  url: https://neomorph.com/patients/
+- type: News
+  url: https://neomorph.com/news/
+- type: BlogRSS
+  url: https://neomorph.com/feed/
+- type: Careers
+  url: https://neomorph.com/careers/
+- type: Contact
+  url: https://neomorph.com/contact/
+- type: PrivacyPolicy
+  url: https://neomorph.com/privacy-policy/
+- type: TermsOfService
+  url: https://neomorph.com/terms-of-use/
+- type: CookiePolicy
+  url: https://neomorph.com/cookie-policy/
+- type: Accessibility
+  url: https://neomorph.com/accessibility-statement/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/neomorph-llc/
+- type: Twitter
+  url: https://x.com/neomorphinc
+- type: SecondaryMarket
   url: https://forgeglobal.com/neomorph_stock/
+- type: Authentication
+  url: authentication/neomorph-authentication.yml
+- type: Conventions
+  url: conventions/neomorph-conventions.yml
+- type: Conformance
+  url: conformance/neomorph-conformance.yml
+- type: ErrorCatalog
+  url: errors/neomorph-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/neomorph-lifecycle.yml
+- type: DataModel
+  url: data-model/neomorph-data-model.yml
+- type: RateLimits
+  url: rate-limits/neomorph-rate-limits.yml
+- type: Plans
+  url: plans/neomorph-plans-pricing.yml
+- type: Overlay
+  url: overlays/neomorph-content-overlay.yaml
+- type: DomainSecurity
+  url: security/neomorph-domain-security.yml
+- type: LLMsTxt
+  url: llms/neomorph-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-08-26'
+  status: enriched
+  artifacts_added: 28
+  pass: local-v1

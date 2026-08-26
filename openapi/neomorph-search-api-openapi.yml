@@ -1,0 +1,231 @@
+openapi: 3.2.0
+info:
+  title: Neomorph Search API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind neomorph.com.
+  description: The read-only content surface Neomorph exposes at https://neomorph.com/wp-json. Neomorph,
+    Inc. is a venture-backed, clinical-stage biotechnology company at 5590 Morehouse Drive in San Diego,
+    California, founded in 2020 to design molecular glue degraders that reshape E3 ubiquitin ligases into
+    neomorphic surfaces and eliminate previously undruggable proteins. It runs no developer program and
+    markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and
+    `oembed/1.0` routes the site publishes, restricted to the operations verified to return data anonymously
+    on 2026-08-26. See x-api-evangelist-provenance.
+  contact:
+    name: Neomorph, Inc.
+    url: https://neomorph.com/contact/
+  x-api-evangelist-provenance: Derived by the API Evangelist enrichment pipeline from the live WordPress
+    REST route index at https://neomorph.com/wp-json/ (432 routes across 23 namespaces) and from the per-route
+    OPTIONS descriptors that deployment returns, verified against live anonymous responses on 2026-08-26.
+    Every parameter and every response property below appears verbatim in that deployment's own route/schema
+    descriptors, and every collection count in a description was read from the X-WP-Total response header
+    on that date. Neomorph publishes no OpenAPI, no developer portal and no API reference for this surface;
+    the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract.
+    Write operations and every authenticated route (/wp/v2/users, /wp/v2/settings, /wp/v2/menu-items,
+    /wp/v2/block-types, /wp/v2/elementor_library, the wp-abilities/v1 namespace and the whole plugin-administration
+    surface) are deliberately excluded - they were probed anonymously and returned 401/403. Nothing here
+    was obtained with credentials.
+servers:
+- url: https://neomorph.com/wp-json
+  description: Production content API
+tags:
+- name: Search
+  description: 'Cross-content search across published objects. Returned X-WP-Total: 32 for the term ''neomorph''
+    on 2026-08-26.'
+paths:
+  /wp/v2/search:
+    get:
+      tags:
+      - Search
+      operationId: search
+      summary: Search published content
+      description: Searches every publicly queryable object type on the deployment (post, page, team,
+        resource) and returns a compact id/title/url/type/subtype record for each hit.
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          default: view
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: Limit results to items of an object type.
+        schema:
+          type: string
+          enum:
+          - post
+          - term
+          - post-format
+          default: post
+      - name: subtype
+        in: query
+        description: Limit results to items of one or more object subtypes.
+        schema:
+          type: array
+          default: any
+          items:
+            type: string
+            enum:
+            - post
+            - page
+            - e-floating-buttons
+            - elementor_library
+            - team
+            - resource
+            - astra-advanced-hook
+            - category
+            - post_tag
+            - team_category
+            - any
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      responses:
+        '200':
+          description: A page of search results.
+          headers:
+            X-WP-Total:
+              description: Total number of matches.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+components:
+  schemas:
+    SearchResult:
+      type: object
+      title: search-result
+      properties:
+        id:
+          type:
+          - integer
+          - string
+          readOnly: true
+          description: Unique identifier for the object.
+        title:
+          type: string
+          readOnly: true
+          description: The title for the object.
+        url:
+          type: string
+          format: uri
+          readOnly: true
+          description: URL to the object.
+        type:
+          type: string
+          enum:
+          - post
+          - term
+          - post-format
+          readOnly: true
+          description: Object type.
+        subtype:
+          type: string
+          enum:
+          - post
+          - page
+          - e-floating-buttons
+          - elementor_library
+          - team
+          - resource
+          - astra-advanced-hook
+          - category
+          - post_tag
+          - team_category
+          readOnly: true
+          description: Object subtype.
+    Error:
+      type: object
+      title: WP_Error
+      description: The WordPress REST error envelope. It is NOT RFC 9457 application/problem+json; it
+        is served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+            params:
+              type: object
+              description: Per-parameter validation messages, on 400.
+            details:
+              type: object
+              description: Per-parameter validation detail, on 400.
+      required:
+      - code
+      - message
+  responses:
+    InvalidParam:
+      description: Invalid parameter. Returns `rest_invalid_param` with a per-parameter breakdown in `data.params`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: 'Authentication required. Returns `rest_forbidden` (or a route-specific slug) with
+        `data.status: 401`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: 'No route or resource matched. Returns `rest_no_route` or a `rest_*_invalid_id` slug
+        with `data.status: 404`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

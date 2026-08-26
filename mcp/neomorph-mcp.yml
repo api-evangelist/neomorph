@@ -1,0 +1,110 @@
+generated: '2026-08-26'
+method: derived
+status: candidate
+source: >-
+  Derived from openapi/neomorph-*-openapi.yml in this repo. Neomorph ships no MCP server; every probe
+  for one is recorded under x-evidence below.
+note: >-
+  NO MCP SERVER EXISTS FOR THIS PROVIDER. The tools below are a CANDIDATE mapping the API Evangelist
+  pipeline derived from the read operations of the WordPress content API, so that the shape of what an
+  MCP server over this surface would look like is on record. They are not published, not hosted, not
+  installable and not callable. Nothing here should be read as an agent surface Neomorph offers.
+  Worth noting: this deployment DOES carry the WordPress Abilities API (wp-abilities/v1), the
+  capability registry WordPress ships as the substrate for MCP-style tool exposure — but it is fully
+  auth-gated here, returning rest_forbidden at HTTP 401 for both /abilities and /categories, so not
+  even the names of its abilities are anonymously readable. That is the closest this provider comes to
+  an agent surface, and it is closed.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: probed
+tools:
+- name: list_news
+  description: List Neomorph press releases and media coverage, newest first.
+  rest: [listPosts]
+  openapi: openapi/neomorph-news-api-openapi.yml
+  confidence: high
+- name: get_news_item
+  description: Retrieve a single Neomorph press release or media item by id.
+  rest: [getPosts]
+  openapi: openapi/neomorph-news-api-openapi.yml
+  confidence: high
+- name: list_publications
+  description: >-
+    List the peer-reviewed molecular glue and targeted protein degradation publications Neomorph
+    surfaces on its Publications page.
+  rest: [listResource]
+  openapi: openapi/neomorph-publications-api-openapi.yml
+  confidence: high
+- name: get_publication
+  description: Retrieve a single publication record by id.
+  rest: [getResource]
+  openapi: openapi/neomorph-publications-api-openapi.yml
+  confidence: high
+- name: list_team
+  description: >-
+    List Neomorph team members. Returns names, slugs, portraits and category ids only — job titles and
+    biographies are held in ACF fields that read empty anonymously (see data-model/).
+  rest: [listTeam]
+  openapi: openapi/neomorph-team-api-openapi.yml
+  confidence: high
+- name: list_team_categories
+  description: >-
+    List the team groupings — Management, Board of Directors, Scientific Founders, Scientific Advisory
+    Board.
+  rest: [listTeamCategory]
+  openapi: openapi/neomorph-team-api-openapi.yml
+  confidence: high
+- name: list_pages
+  description: List Neomorph corporate pages, including the NEO-811 programme page.
+  rest: [listPages]
+  openapi: openapi/neomorph-pages-api-openapi.yml
+  confidence: high
+- name: get_page
+  description: Retrieve a single corporate page with its rendered content.
+  rest: [getPages]
+  openapi: openapi/neomorph-pages-api-openapi.yml
+  confidence: high
+- name: search_content
+  description: Search every publicly queryable object on neomorph.com — posts, pages, team, publications.
+  rest: [search]
+  openapi: openapi/neomorph-search-api-openapi.yml
+  confidence: high
+- name: list_media
+  description: List media attachments — team portraits, pipeline and platform figures, press assets.
+  rest: [listMedia]
+  openapi: openapi/neomorph-media-api-openapi.yml
+  confidence: high
+x-evidence:
+  probed: '2026-08-26'
+  probes:
+  - url: https://neomorph.com/mcp
+    method: POST tools/list
+    status: 404
+  - url: https://neomorph.com/wp-json/mcp
+    method: POST tools/list
+    status: 404
+    body: rest_no_route
+  - url: https://neomorph.com/wp-json/wp/v2/mcp
+    method: POST tools/list
+    status: 404
+    body: rest_no_route
+  - url: https://neomorph.com/.well-known/mcp
+    method: POST tools/list
+    status: 404
+  - url: https://neomorph.com/wp-json/wp-abilities/v1/abilities
+    method: GET
+    status: 401
+    body: rest_forbidden
+  - url: https://neomorph.com/.well-known/oauth-authorization-server
+    method: GET
+    status: 404
+  - url: https://neomorph.com/.well-known/oauth-protected-resource
+    method: GET
+    status: 404
+  route_index_search: >-
+    All 432 routes in https://neomorph.com/wp-json/ were enumerated; no namespace or route matching
+    /mcp/ is registered on this deployment.

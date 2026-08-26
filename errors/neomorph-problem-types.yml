@@ -1,0 +1,125 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live anonymous error responses observed against https://neomorph.com/wp-json on 2026-08-26, plus the
+  4xx/5xx responses declared in openapi/neomorph-*-openapi.yml.
+format: wp_error
+rfc9457: false
+note: >-
+  Neomorph publishes no error reference — it runs no developer program. This catalogue is the set of
+  error envelopes actually returned by the deployment when probed anonymously. The envelope is the
+  WordPress WP_Error shape, NOT RFC 9457 application/problem+json: responses are served as
+  application/json with a flat {code, message, data:{status}} object and no type URI, no title field,
+  and no instance. `code` is the stable machine-readable slug an agent should branch on; `message` is
+  English prose and is not stable. On 400 the deployment additionally returns per-parameter breakdowns
+  in data.params and data.details, which is the richest part of the surface and the only place a
+  machine-readable validation reason appears.
+envelope:
+  media_type: application/json
+  fields:
+    code: Machine-readable error slug. Stable. Branch on this.
+    message: Human-readable English message. Not stable, not localized on this deployment.
+    data.status: HTTP status code, repeated inside the body.
+    data.params: Present on rest_invalid_param only — a map of parameter name to a plain-English reason.
+    data.details: >-
+      Present on rest_invalid_param only — a map of parameter name to a nested
+      {code, message, data} object carrying the specific validation slug, e.g. rest_out_of_bounds.
+problem_types:
+- code: rest_invalid_param
+  status: 400
+  title: Invalid parameter(s)
+  detail: >-
+    One or more query parameters failed validation against the route's declared args. The offending
+    parameters are named in data.params and explained with their own slug in data.details.
+  remediation: >-
+    Read data.details.<param>.code for the specific failure — rest_out_of_bounds for a numeric
+    parameter outside min/max, rest_not_in_enum for a value outside a declared enum — and correct the
+    request. Do not retry unchanged.
+  retryable: false
+  observed:
+    request: GET /wp/v2/posts?per_page=999
+    nested_code: rest_out_of_bounds
+    message: 'per_page must be between 1 (inclusive) and 100 (inclusive)'
+- code: rest_forbidden_context
+  status: 401
+  title: Context not permitted
+  detail: >-
+    The requested `context` requires an authenticated user. On this deployment `context=view` and
+    `context=embed` are anonymous; `context=edit` is not.
+  remediation: Use context=view or context=embed. There is no anonymous path to the edit context.
+  retryable: false
+  observed:
+    request: GET /wp/v2/posts?context=edit
+    message: Sorry, you are not allowed to edit posts in this post type.
+- code: rest_forbidden
+  status: 401
+  title: Authentication required
+  detail: >-
+    The route exists but requires an authenticated WordPress user. Returned by /wp/v2/settings,
+    /wp/v2/elementor_library and the whole wp-abilities/v1 namespace.
+  remediation: >-
+    Not obtainable without a credential Neomorph does not issue to third parties. Treat as
+    permanently unavailable to anonymous clients.
+  retryable: false
+- code: rest_cannot_view
+  status: 401
+  title: Collection not viewable
+  detail: Route-specific variant of rest_forbidden. Returned by /wp/v2/menu-items.
+  remediation: Same as rest_forbidden.
+  retryable: false
+- code: rest_block_type_cannot_view
+  status: 401
+  title: Block types not viewable
+  detail: Route-specific variant of rest_forbidden. Returned by /wp/v2/block-types.
+  remediation: Same as rest_forbidden.
+  retryable: false
+- code: rest_post_invalid_id
+  status: 404
+  title: Invalid post ID
+  detail: >-
+    No object with that numeric id exists in the addressed collection, or it is not published. Returned
+    identically for /wp/v2/posts/{id}, /wp/v2/pages/{id}, /wp/v2/team/{id} and /wp/v2/resource/{id} —
+    the slug does not distinguish "never existed" from "not published to you".
+  remediation: >-
+    List the collection first and use an id from the response. Do not probe ids sequentially; the
+    response is indistinguishable for unpublished and non-existent objects.
+  retryable: false
+  observed:
+    request: GET /wp/v2/posts/999999
+    message: Invalid post ID.
+- code: rest_no_route
+  status: 404
+  title: No route matched
+  detail: >-
+    No registered route matched the URL and request method. This is the correct 404 for an unknown
+    path under /wp-json; an unknown path OUTSIDE /wp-json returns an HTML page instead, not JSON.
+  remediation: Fetch GET /wp-json/ and read the routes map before constructing paths.
+  retryable: false
+  observed:
+    request: GET /wp/v2/nope
+    message: No route was found matching the URL and request method.
+- code: oembed_invalid_url
+  status: 404
+  title: Invalid oEmbed URL
+  detail: The url parameter does not resolve to a published object on neomorph.com.
+  remediation: Pass a permalink from this site's own sitemap or from a collection response `link` field.
+  retryable: false
+  observed:
+    request: GET /oembed/1.0/embed?url=https%3A%2F%2Fexample.com%2F
+    message: Not Found
+non_json_errors:
+- path: /wp/v2/users
+  status: 403
+  content_type: text/html
+  title: Forbidden Access
+  detail: >-
+    The user-enumeration route is blocked at the edge by the site's WAF (WP Defender) and returns an
+    HTML page, not a WP_Error envelope. An agent parsing this surface must not assume every 4xx under
+    /wp-json is JSON.
+- path: any unmatched path outside /wp-json
+  status: 404
+  content_type: text/html
+  detail: The themed WordPress 404 page, or a bare nginx "Not Found" page for /.well-known/* paths.
+x-evidence:
+  probed: '2026-08-26'
+  host: neomorph.com

@@ -1,0 +1,45 @@
+generated: '2026-08-26'
+method: generated
+source: >-
+  Authored by the API Evangelist enrichment pipeline on 2026-08-26. Every operationId referenced by
+  every skill below was grepped out of the OpenAPI documents in openapi/, which were themselves derived
+  from live anonymous probes of https://neomorph.com/wp-json on the same date. No operation, parameter,
+  field or limit named in these skills was invented.
+provider: neomorph
+note: >-
+  Neomorph publishes no Agent Skills, no AGENTS.md and no agent-facing documentation of any kind —
+  https://neomorph.com/llms.txt returns 404 and no skills surface was found. These four are
+  API-Evangelist-authored skills over the read-only WordPress content API behind neomorph.com. They
+  cover the four flows that surface actually supports; there are no write flows, because no write
+  operation is reachable without a WordPress credential Neomorph does not issue to third parties.
+skills:
+- name: neomorph-track-company-news
+  file: neomorph-track-company-news.md
+  api: neomorph:neomorph-news-api
+  operations: [listPosts, getPosts, listCategories]
+  summary: Press releases and media coverage, newest first, with categories resolved and incremental polling.
+- name: neomorph-read-publications
+  file: neomorph-read-publications.md
+  api: neomorph:neomorph-publications-api
+  operations: [listResource, getResource]
+  summary: >-
+    The peer-reviewed molecular glue literature. Documents the rest_base trap (`resource`, not
+    `publications`) and the empty-ACF citation-metadata gap.
+- name: neomorph-map-leadership-and-board
+  file: neomorph-map-leadership-and-board.md
+  api: neomorph:neomorph-team-api
+  operations: [listTeamCategory, listTeam, getTeam]
+  summary: >-
+    People grouped by Management / Board / Scientific Founders. Documents that titles and biographies
+    are NOT retrievable and must not be generated.
+- name: neomorph-search-the-site
+  file: neomorph-search-the-site.md
+  api: neomorph:neomorph-search-api
+  operations: [search, getIndex, listTypes, getPosts, getPages, getTeam, getResource]
+  summary: Cross-collection search plus the subtype→collection routing table for resolving hits.
+cross_cutting_rules:
+  conventions: conventions/neomorph-conventions.yml
+  errors: errors/neomorph-problem-types.yml
+  authentication: authentication/neomorph-authentication.yml
+  rate_limits: rate-limits/neomorph-rate-limits.yml
+  data_model: data-model/neomorph-data-model.yml

@@ -1,0 +1,902 @@
+openapi: 3.2.0
+info:
+  title: Neomorph Media API
+  version: wp/v2
+  summary: Anonymously readable WordPress REST content API behind neomorph.com.
+  description: The read-only content surface Neomorph exposes at https://neomorph.com/wp-json. Neomorph,
+    Inc. is a venture-backed, clinical-stage biotechnology company at 5590 Morehouse Drive in San Diego,
+    California, founded in 2020 to design molecular glue degraders that reshape E3 ubiquitin ligases into
+    neomorphic surfaces and eliminate previously undruggable proteins. It runs no developer program and
+    markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and
+    `oembed/1.0` routes the site publishes, restricted to the operations verified to return data anonymously
+    on 2026-08-26. See x-api-evangelist-provenance.
+  contact:
+    name: Neomorph, Inc.
+    url: https://neomorph.com/contact/
+  x-api-evangelist-provenance: Derived by the API Evangelist enrichment pipeline from the live WordPress
+    REST route index at https://neomorph.com/wp-json/ (432 routes across 23 namespaces) and from the per-route
+    OPTIONS descriptors that deployment returns, verified against live anonymous responses on 2026-08-26.
+    Every parameter and every response property below appears verbatim in that deployment's own route/schema
+    descriptors, and every collection count in a description was read from the X-WP-Total response header
+    on that date. Neomorph publishes no OpenAPI, no developer portal and no API reference for this surface;
+    the humanURL in apis.yml points at the upstream WordPress REST handbook that defines the wp/v2 contract.
+    Write operations and every authenticated route (/wp/v2/users, /wp/v2/settings, /wp/v2/menu-items,
+    /wp/v2/block-types, /wp/v2/elementor_library, the wp-abilities/v1 namespace and the whole plugin-administration
+    surface) are deliberately excluded - they were probed anonymously and returned 401/403. Nothing here
+    was obtained with credentials.
+servers:
+- url: https://neomorph.com/wp-json
+  description: Production content API
+tags:
+- name: Media
+  description: Media library - team portraits, pipeline and platform figures, and press assets (111 attachments
+    at harvest time).
+paths:
+  /wp/v2/media:
+    get:
+      tags:
+      - Media
+      operationId: listMedia
+      summary: List media
+      description: 'Lists published items in the `media` collection. Media library - team portraits, pipeline
+        and platform figures, and press assets (111 attachments at harvest time). Paginated; `X-WP-Total`
+        and `X-WP-TotalPages` are returned as response headers and are exposed cross-origin via `Access-Control-Expose-Headers`.
+        Anonymous read returned HTTP 200 with `X-WP-Total: 111` on 2026-08-26.'
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: Limit response to posts published after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: modified_after
+        in: query
+        description: Limit response to posts modified after a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: author
+        in: query
+        description: Limit result set to posts assigned to specific authors.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: author_exclude
+        in: query
+        description: Ensure result set excludes posts assigned to specific authors.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: before
+        in: query
+        description: Limit response to posts published before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: modified_before
+        in: query
+        description: Limit response to posts modified before a given ISO8601 compliant date.
+        schema:
+          type: string
+          format: date-time
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: search_semantics
+        in: query
+        description: How to interpret the search input.
+        schema:
+          type: string
+          enum:
+          - exact
+      - name: offset
+        in: query
+        description: Offset the result set by a specific number of items.
+        schema:
+          type: integer
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      - name: orderby
+        in: query
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+          enum:
+          - author
+          - date
+          - id
+          - include
+          - modified
+          - parent
+          - relevance
+          - slug
+          - include_slugs
+          - title
+          default: date
+      - name: parent
+        in: query
+        description: Limit result set to items with particular parent IDs.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: parent_exclude
+        in: query
+        description: Limit result set to all items except those of a particular parent ID.
+        schema:
+          type: array
+          default: []
+          items:
+            type: integer
+      - name: search_columns
+        in: query
+        description: Array of column names to be searched.
+        schema:
+          type: array
+          default: []
+          items:
+            type: string
+            enum:
+            - post_title
+            - post_content
+            - post_excerpt
+      - name: slug
+        in: query
+        description: Limit result set to posts with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: status
+        in: query
+        description: Limit result set to posts assigned one or more statuses.
+        schema:
+          type: array
+          default: inherit
+          items:
+            type: string
+            enum:
+            - inherit
+            - private
+            - trash
+      - name: media_type
+        in: query
+        description: Limit result set to attachments of a particular media type or media types.
+        schema:
+          type: array
+          default: null
+          items:
+            type: string
+            enum:
+            - image
+            - video
+            - text
+            - application
+            - audio
+      - name: mime_type
+        in: query
+        description: Limit result set to attachments of a particular MIME type or MIME types.
+        schema:
+          type: array
+          default: null
+          items:
+            type: string
+      responses:
+        '200':
+          description: A page of media.
+          headers:
+            X-WP-Total:
+              description: Total number of items in the collection.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /wp/v2/media/{id}:
+    get:
+      tags:
+      - Media
+      operationId: getMedia
+      summary: Get a media item
+      description: Retrieves a single media item from the `media` collection by its numeric WordPress
+        id.
+      parameters:
+      - name: id
+        in: path
+        description: Unique identifier for the post.
+        schema:
+          type: integer
+        required: true
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+          enum:
+          - view
+          - embed
+          - edit
+          default: view
+      responses:
+        '200':
+          description: The requested media item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attachment'
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    Attachment:
+      type: object
+      title: attachment
+      properties:
+        date:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date the post was published, in the site's timezone.
+        date_gmt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: The date the post was published, as GMT.
+        guid:
+          type: object
+          properties:
+            raw:
+              type: string
+              readOnly: true
+            rendered:
+              type: string
+              readOnly: true
+          readOnly: true
+          description: The globally unique identifier for the post.
+        id:
+          type: integer
+          readOnly: true
+          description: Unique identifier for the post.
+        link:
+          type: string
+          format: uri
+          readOnly: true
+          description: URL to the post.
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date the post was last modified, in the site's timezone.
+        modified_gmt:
+          type: string
+          format: date-time
+          readOnly: true
+          description: The date the post was last modified, as GMT.
+        slug:
+          type: string
+          description: An alphanumeric identifier for the post unique to its type.
+        status:
+          type: string
+          enum:
+          - publish
+          - future
+          - draft
+          - pending
+          - private
+          - acf-disabled
+          description: A named status for the post.
+        type:
+          type: string
+          readOnly: true
+          description: Type of post.
+        permalink_template:
+          type: string
+          readOnly: true
+          description: Permalink template for the post.
+        generated_slug:
+          type: string
+          readOnly: true
+          description: Slug automatically generated from the post title.
+        class_list:
+          type: array
+          items:
+            type: string
+          readOnly: true
+          description: An array of the class names for the post container element.
+        title:
+          type: object
+          properties:
+            raw:
+              type: string
+            rendered:
+              type: string
+              readOnly: true
+          description: The title for the post.
+        author:
+          type: integer
+          description: The ID for the author of the post.
+        featured_media:
+          type: integer
+          description: The ID of the featured media for the post.
+        comment_status:
+          type: string
+          enum:
+          - open
+          - closed
+          description: Whether or not comments are open on the post.
+        ping_status:
+          type: string
+          enum:
+          - open
+          - closed
+          description: Whether or not the post can be pinged.
+        meta:
+          type: object
+          properties:
+            _acf_changed:
+              type: boolean
+              default: false
+            site-sidebar-layout:
+              type: string
+              default: default
+            site-content-layout:
+              type: string
+              default: ''
+            ast-site-content-layout:
+              type: string
+              default: default
+            site-content-style:
+              type: string
+              default: default
+            site-sidebar-style:
+              type: string
+              default: default
+            ast-global-header-display:
+              type: string
+              default: ''
+            ast-banner-title-visibility:
+              type: string
+              default: ''
+            ast-main-header-display:
+              type: string
+              default: ''
+            ast-hfb-above-header-display:
+              type: string
+              default: ''
+            ast-hfb-below-header-display:
+              type: string
+              default: ''
+            ast-hfb-mobile-header-display:
+              type: string
+              default: ''
+            site-post-title:
+              type: string
+              default: ''
+            ast-breadcrumbs-content:
+              type: string
+              default: ''
+            ast-featured-img:
+              type: string
+              default: ''
+            footer-sml-layout:
+              type: string
+              default: ''
+            ast-disable-related-posts:
+              type: string
+              default: ''
+            theme-transparent-header-meta:
+              type: string
+              default: ''
+            adv-header-id-meta:
+              type: string
+              default: ''
+            stick-header-meta:
+              type: string
+              default: ''
+            header-above-stick-meta:
+              type: string
+              default: ''
+            header-main-stick-meta:
+              type: string
+              default: ''
+            header-below-stick-meta:
+              type: string
+              default: ''
+            astra-migrate-meta-layouts:
+              type: string
+              default: default
+            ast-page-background-enabled:
+              type: string
+              default: default
+            ast-page-background-meta:
+              type: object
+              default:
+                desktop:
+                  background-color: var(--ast-global-color-5)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                tablet:
+                  background-color: ''
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                mobile:
+                  background-color: ''
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+              properties:
+                desktop:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                tablet:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                mobile:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+              additionalProperties: false
+            ast-content-background-meta:
+              type: object
+              default:
+                desktop:
+                  background-color: var(--ast-global-color-4)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                tablet:
+                  background-color: var(--ast-global-color-4)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+                mobile:
+                  background-color: var(--ast-global-color-4)
+                  background-image: ''
+                  background-repeat: repeat
+                  background-position: center center
+                  background-size: auto
+                  background-attachment: scroll
+                  background-type: ''
+                  background-media: ''
+                  overlay-type: ''
+                  overlay-color: ''
+                  overlay-opacity: ''
+                  overlay-gradient: ''
+              properties:
+                desktop:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                tablet:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+                mobile:
+                  type: object
+                  properties:
+                    background-color:
+                      type: string
+                    background-image:
+                      type: string
+                    background-repeat:
+                      type: string
+                    background-position:
+                      type: string
+                    background-size:
+                      type: string
+                    background-attachment:
+                      type: string
+                    background-type:
+                      type: string
+                    background-media:
+                      type: string
+                    overlay-type:
+                      type: string
+                    overlay-color:
+                      type: string
+                    overlay-opacity:
+                      type: string
+                    overlay-gradient:
+                      type: string
+                  additionalProperties: false
+              additionalProperties: false
+          description: Meta fields.
+        template:
+          type: string
+          description: The theme file to use to display the post.
+        acf:
+          type: object
+          properties: []
+          description: ACF field data
+        smush:
+          type: string
+          description: Smush data.
+        alt_text:
+          type: string
+          description: Alternative text to display when attachment is not displayed.
+        caption:
+          type: object
+          properties:
+            raw:
+              type: string
+            rendered:
+              type: string
+              readOnly: true
+          description: The attachment caption.
+        description:
+          type: object
+          properties:
+            raw:
+              type: string
+            rendered:
+              type: string
+              readOnly: true
+          description: The attachment description.
+        media_type:
+          type: string
+          enum:
+          - image
+          - file
+          readOnly: true
+          description: Attachment type.
+        mime_type:
+          type: string
+          readOnly: true
+          description: The attachment MIME type.
+        media_details:
+          type: object
+          readOnly: true
+          description: Details about the media file, specific to its type.
+        post:
+          type: integer
+          description: The ID for the associated post of the attachment.
+        source_url:
+          type: string
+          format: uri
+          readOnly: true
+          description: URL to the original attachment file.
+        missing_image_sizes:
+          type: array
+          items:
+            type: string
+          readOnly: true
+          description: List of the missing image sizes of the attachment.
+        filename:
+          type: string
+          readOnly: true
+          description: Original attachment file name.
+        filesize:
+          type:
+          - integer
+          - 'null'
+          readOnly: true
+          description: Attachment file size in bytes.
+        exif_orientation:
+          type: integer
+          readOnly: true
+          description: EXIF orientation value. Values 1-8 follow the EXIF specification, where 1 means
+            no rotation needed.
+        image_quality:
+          type: object
+          properties:
+            default:
+              type: integer
+              minimum: 1
+              maximum: 100
+            sizes:
+              type: object
+              properties:
+                medium_large:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                1536x1536:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                2048x2048:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+          readOnly: true
+          description: Encode quality (1-100) from the wp_editor_set_quality filter, resolved against
+            the output MIME type. The "default" value applies to the full-size image; "sizes" lists per-registered-size
+            overrides where the filtered value differs from "default".
+        image_output_format:
+          type:
+          - string
+          - 'null'
+          readOnly: true
+          description: The output MIME type this image should be converted to, based on the image_editor_output_format
+            filter. Null if no conversion is needed.
+        image_save_progressive:
+          type: boolean
+          readOnly: true
+          description: Whether to use progressive/interlaced encoding when saving this image.
+    Error:
+      type: object
+      title: WP_Error
+      description: The WordPress REST error envelope. It is NOT RFC 9457 application/problem+json; it
+        is served as application/json.
+      properties:
+        code:
+          type: string
+          description: Machine-readable error slug, e.g. rest_post_invalid_id.
+        message:
+          type: string
+          description: Human-readable error message.
+        data:
+          type: object
+          description: Error detail.
+          properties:
+            status:
+              type: integer
+              description: HTTP status code.
+            params:
+              type: object
+              description: Per-parameter validation messages, on 400.
+            details:
+              type: object
+              description: Per-parameter validation detail, on 400.
+      required:
+      - code
+      - message
+  responses:
+    InvalidParam:
+      description: Invalid parameter. Returns `rest_invalid_param` with a per-parameter breakdown in `data.params`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: 'Authentication required. Returns `rest_forbidden` (or a route-specific slug) with
+        `data.status: 401`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: 'No route or resource matched. Returns `rest_no_route` or a `rest_*_invalid_id` slug
+        with `data.status: 404`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

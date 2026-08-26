@@ -1,0 +1,212 @@
+generated: '2026-08-26'
+method: derived
+source: >-
+  Derived from the JSON Schema response descriptors returned by OPTIONS on every catalogued route of
+  https://neomorph.com/wp-json (harvested 2026-08-26) and from the _links/curies hypermedia the live
+  responses carry. Every entity, field and relationship below appears verbatim in that deployment's
+  own descriptors; nothing is inferred from WordPress documentation.
+note: >-
+  This is the entity graph of a corporate content management system, not of a product. Its shape is
+  WordPress core plus two custom post types and one custom taxonomy that Neomorph's site builders
+  registered — `team`, `resource` (surfaced publicly as Publications) and `team_category`. Those three
+  are the only Neomorph-specific structures in the model, and they are what make this graph worth
+  recording: they say the site is organised around people and peer-reviewed literature.
+id_scheme:
+  type: integer
+  detail: >-
+    Every entity is keyed by a monotonically-assigned WordPress integer id. There are no prefixed or
+    typed identifiers, so an id is only meaningful together with the collection it came from — id 1476
+    is a page and id 1506 is a post. Objects additionally carry a `slug` (URL-safe, unique within a
+    collection) and a `guid` that is a permalink-shaped string, not a resolvable canonical URI.
+entities:
+- name: Post
+  collection: /wp/v2/posts
+  count_at_harvest: 14
+  detail: Press releases and media coverage. The company news archive.
+  key_fields: [id, slug, date, date_gmt, modified, title, content, excerpt, link, status, author, featured_media, categories, tags, format, sticky, meta, acf]
+- name: Page
+  collection: /wp/v2/pages
+  count_at_harvest: 15
+  detail: Corporate pages, including the NEO-811 programme page nested under /pipeline/.
+  key_fields: [id, slug, date, modified, title, content, excerpt, link, status, parent, menu_order, author, featured_media, template, meta, acf]
+- name: TeamMember
+  collection: /wp/v2/team
+  count_at_harvest: 19
+  custom_post_type: team
+  detail: >-
+    Management, board of directors and scientific founders. Neomorph-specific type. Note the schema
+    carries NO `content` field — biography copy lives in the `acf` (Advanced Custom Fields) object,
+    which is exposed on the anonymous surface.
+  key_fields: [id, slug, date, modified, title, link, status, featured_media, team_category, template, meta, acf]
+- name: Publication
+  collection: /wp/v2/resource
+  count_at_harvest: 11
+  custom_post_type: resource
+  detail: >-
+    Peer-reviewed molecular glue and targeted protein degradation literature, 2014-2022. Neomorph-
+    specific type. Carries `content` and `menu_order` but, unlike Post, no author, categories or tags —
+    citation metadata is carried in `acf`.
+  key_fields: [id, slug, date, modified, title, content, link, status, featured_media, menu_order, template, meta, acf]
+- name: Media
+  collection: /wp/v2/media
+  count_at_harvest: 111
+  detail: >-
+    Attachments — team portraits, pipeline and platform figures, logos, press assets. The richest
+    entity in the model.
+  key_fields: [id, slug, date, modified, title, link, alt_text, caption, description, media_type, mime_type, media_details, source_url, filename, filesize, post, author]
+- name: Category
+  collection: /wp/v2/categories
+  count_at_harvest: 2
+  taxonomy: category
+  hierarchical: true
+  detail: 'Two terms registered: Press Release (13 posts) and In The Media (1 post).'
+  key_fields: [id, name, slug, description, count, link, taxonomy, parent, meta, acf]
+- name: Tag
+  collection: /wp/v2/tags
+  count_at_harvest: 0
+  taxonomy: post_tag
+  hierarchical: false
+  detail: Registered and reachable, but no term has been created.
+  key_fields: [id, name, slug, description, count, link, taxonomy, meta, acf]
+- name: TeamCategory
+  collection: /wp/v2/team_category
+  count_at_harvest: 4
+  taxonomy: team_category
+  hierarchical: true
+  detail: >-
+    Neomorph-specific taxonomy grouping the Team collection: Management (11), Board of Directors (7),
+    Scientific Founders (4), Scientific Advisory Board (0 — registered but unpopulated).
+  key_fields: [id, name, slug, description, count, link, taxonomy, parent, meta, acf]
+- name: Comment
+  collection: /wp/v2/comments
+  count_at_harvest: 0
+  detail: Registered and reachable, but empty.
+  key_fields: [id, post, parent, author, author_name, author_url, content, date, link, status, type]
+- name: SearchResult
+  collection: /wp/v2/search
+  detail: >-
+    A projection, not a stored entity — a compact {id, title, url, type, subtype} record pointing back
+    at a Post, Page, TeamMember or Publication.
+  key_fields: [id, title, url, type, subtype, _links]
+relationships:
+- from: Post
+  to: Category
+  type: has_many
+  via: categories
+  detail: Array of category term ids. Filterable in reverse with ?categories= on the collection.
+- from: Post
+  to: Tag
+  type: has_many
+  via: tags
+  detail: Array of post_tag term ids. Always empty on this deployment — the taxonomy has no terms.
+- from: Post
+  to: Media
+  type: has_one
+  via: featured_media
+  detail: Integer media id, 0 when unset.
+- from: Post
+  to: User
+  type: belongs_to
+  via: author
+  detail: >-
+    Integer user id. The relationship is declared in the schema and the id is returned, but the User
+    entity itself is NOT resolvable — /wp/v2/users is blocked at the edge with an HTML 403. This is the
+    one dangling reference in the model.
+- from: Page
+  to: Page
+  type: belongs_to
+  via: parent
+  detail: >-
+    Self-referential hierarchy. Exercised on this deployment — the NEO-811 page (id 1476) is a child
+    of the Pipeline page.
+- from: Page
+  to: Media
+  type: has_one
+  via: featured_media
+- from: Page
+  to: User
+  type: belongs_to
+  via: author
+  detail: Same dangling reference as Post.author.
+- from: TeamMember
+  to: TeamCategory
+  type: has_many
+  via: team_category
+  detail: >-
+    Array of team_category term ids. This is the relationship that structures the About section into
+    Management, Board of Directors, Scientific Founders and Scientific Advisory Board.
+- from: TeamMember
+  to: Media
+  type: has_one
+  via: featured_media
+  detail: The team portrait.
+- from: Publication
+  to: Media
+  type: has_one
+  via: featured_media
+- from: Media
+  to: Post
+  type: belongs_to
+  via: post
+  detail: The object this attachment was uploaded to. Polymorphic — resolves to a Post, Page, TeamMember or Publication id.
+- from: Category
+  to: Category
+  type: belongs_to
+  via: parent
+  detail: Hierarchical taxonomy. Not exercised — both terms are top-level.
+- from: TeamCategory
+  to: TeamCategory
+  type: belongs_to
+  via: parent
+  detail: Hierarchical taxonomy. Not exercised — all four terms are top-level.
+- from: Comment
+  to: Post
+  type: belongs_to
+  via: post
+- from: Comment
+  to: Comment
+  type: belongs_to
+  via: parent
+extension_fields:
+- name: acf
+  present_on: [Post, Page, TeamMember, Publication, Media, Category, Tag, TeamCategory, Comment]
+  declared_in_schema: true
+  populated_anonymously: false
+  detail: >-
+    Advanced Custom Fields payload. It is declared on every entity's schema and it is returned on every
+    anonymous response — as an EMPTY ARRAY. Verified on TeamMember 1535 and Publication 1430, both of
+    which returned `"acf": []`. The site's own `meta` object carries `_acf_changed`, so ACF field
+    groups do exist on this deployment; their values are simply not exposed to unauthenticated
+    callers. This is the single most consequential gap in the model: TeamMember has no `content` field
+    at all, so a team member's job title and biography — the thing the /about/ pages actually display —
+    are NOT retrievable through this API. Only the person's name (`title`), slug, portrait and
+    category are. Publication likewise exposes `content` but no structured citation metadata (journal,
+    DOI, year, authors); those live in ACF and read as empty.
+- name: meta
+  present_on: [Post, Page, TeamMember, Publication, Media, Category, Tag, TeamCategory, Comment]
+  detail: >-
+    WordPress post meta, limited to keys registered with show_in_rest. On this deployment it is
+    populated but carries only Astra theme layout keys (site-sidebar-layout, site-content-layout,
+    ast-global-*) and `_acf_changed` — presentation and infrastructure state, no company content.
+- name: class_list
+  present_on: [Post, Page, TeamMember, Publication, Media]
+  detail: >-
+    The CSS class array WordPress generates for the object. Incidental, but it is the one place a
+    taxonomy assignment appears as a readable slug rather than a bare term id — TeamMember 1535
+    carries `team_category-board-of-directors`, which is resolvable without a second request.
+- name: smush
+  present_on: [Media]
+  detail: Image-optimisation plugin state. Infrastructure metadata, not content.
+traversal:
+  mechanism: _links
+  detail: >-
+    Every object carries a HAL-like `_links` object with self, collection, about, author,
+    wp:featuredmedia, wp:attachment and wp:term entries under the curie base https://api.w.org/{rel}.
+    Adding `_embed` to any request inlines the linked objects under `_embedded`, so the whole graph
+    above is walkable in a single request without constructing URLs — except for author, which
+    terminates at a 403.
+render: null
+x-evidence:
+  probed: '2026-08-26'
+  host: neomorph.com
+  method: OPTIONS on each catalogued route + live GET responses

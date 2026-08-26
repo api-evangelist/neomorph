@@ -1,0 +1,139 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live anonymous probes of https://neomorph.com and https://neomorph.com/wp-json on 2026-08-26, read
+  against the ten OpenAPI documents in openapi/. Neomorph publishes no compliance, certification or
+  standards-conformance claim anywhere on its public site; nothing below is quoted from a marketing
+  page, and no Compliance pointer is emitted in apis.yml because there is no published compliance
+  program to point at.
+note: >-
+  Neomorph is a clinical-stage drug discovery company, not a software vendor. The surface catalogued
+  here is the content API of its corporate website. It carries no patient data, no clinical data and
+  no regulated payload, so the health-sector interoperability standards below are correctly absent
+  rather than missing — recorded as conforms:false with the probe that established it, never as a gap
+  the company should close.
+conformance:
+- id: oembed-1.0
+  label: oEmbed 1.0
+  conforms: true
+  evidence:
+    probe: GET https://neomorph.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fneomorph.com%2F
+    status: 200
+    detail: >-
+      Returns a valid oEmbed 1.0 rich response with version "1.0", provider_name "neomorph.com" and
+      provider_url "https://neomorph.com". Discovery links are emitted in every page's HTML head as
+      rel="alternate" type="application/json+oembed" and type="text/xml+oembed", which is the
+      specification's own discovery mechanism. Both json and xml response formats are offered.
+    spec: https://oembed.com/
+- id: rfc8288-web-linking
+  label: RFC 8288 Web Linking
+  conforms: true
+  evidence:
+    probe: GET https://neomorph.com/wp-json/wp/v2/posts?per_page=1
+    status: 200
+    detail: >-
+      Pagination is signalled with a conformant Link header:
+      `link: <https://neomorph.com/wp-json/wp/v2/posts?per_page=1&page=2>; rel="next"`.
+      The site's HTML head additionally carries rel="https://api.w.org/" and rel="shortlink".
+    spec: https://www.rfc-editor.org/rfc/rfc8288
+- id: cors
+  label: CORS with exposed pagination headers
+  conforms: true
+  evidence:
+    probe: GET https://neomorph.com/wp-json/wp/v2/posts?per_page=1
+    status: 200
+    detail: >-
+      `access-control-expose-headers: X-WP-Total, X-WP-TotalPages, Link` and
+      `access-control-allow-headers: Authorization, X-WP-Nonce, Content-Disposition, Content-MD5,
+      Content-Type` are returned, so a cross-origin browser client can read the pagination signal
+      rather than only the body.
+- id: json-schema
+  label: JSON Schema response descriptors
+  conforms: true
+  evidence:
+    probe: OPTIONS https://neomorph.com/wp-json/wp/v2/team
+    status: 200
+    detail: >-
+      Every catalogued route answers OPTIONS with a `schema` object in JSON Schema draft-04 style
+      (type/properties/enum/minimum/maximum/readonly/context) plus an `args` map describing every
+      accepted parameter. This is the self-description the OpenAPI documents in openapi/ were derived
+      from; without it, no contract could have been recovered for this provider at all.
+- id: rss-2.0
+  label: RSS 2.0
+  conforms: true
+  evidence:
+    probe: GET https://neomorph.com/feed/
+    status: 200
+    detail: The news archive is published as an RSS 2.0 feed, wired as the BlogRSS pointer in apis.yml.
+- id: sitemaps-org
+  label: sitemaps.org XML sitemap
+  conforms: true
+  evidence:
+    probe: GET https://neomorph.com/sitemap.xml
+    status: 200
+    detail: Served as an XML sitemap index with an XSL stylesheet.
+- id: rfc9457
+  label: RFC 9457 Problem Details
+  conforms: false
+  evidence:
+    probe: GET https://neomorph.com/wp-json/wp/v2/posts/999999
+    status: 404
+    detail: >-
+      Errors are the WordPress WP_Error envelope served as application/json —
+      {"code":"rest_post_invalid_id","message":"Invalid post ID.","data":{"status":404}}. No
+      application/problem+json media type, no type URI, no title/instance members.
+- id: rfc9110-idempotency
+  label: Idempotency keys
+  conforms: false
+  evidence:
+    detail: >-
+      Not applicable. The anonymously reachable surface is entirely GET; there is no unsafe method a
+      third party can invoke and therefore no idempotency mechanism to publish.
+- id: oauth2
+  label: OAuth 2.0
+  conforms: false
+  evidence:
+    probe: GET https://neomorph.com/.well-known/oauth-authorization-server
+    status: 404
+    detail: >-
+      No OAuth surface. The deployment advertises WordPress application passwords over HTTP Basic for
+      its own editors and nothing else. /.well-known/openid-configuration also 404s.
+- id: rate-limit-headers
+  label: IETF RateLimit header fields
+  conforms: false
+  evidence:
+    probe: GET https://neomorph.com/wp-json/wp/v2/posts?per_page=1
+    status: 200
+    detail: No RateLimit-*, X-RateLimit-* or Retry-After header was returned on any observed response.
+domain_standard:
+  declared: false
+  sector: health / life sciences
+  detail: >-
+    No domain standard is declared by this contract, and none should be. The health regime's standards
+    list (FHIR, SMART-on-FHIR, US Core, USCDI, Da Vinci, CARIN Blue Button, FHIR Bulk Data, CDS Hooks,
+    C-CDA, HL7 v2, DICOM) governs the exchange of patient and clinical data between covered entities.
+    Neomorph is a preclinical-and-Phase-1 drug discovery company; it is not a covered entity, exchanges
+    no PHI over any public interface, and the only API it exposes serves press releases, publications
+    and team biographies. Recording a false here is a description of the market, not a deficiency.
+  probed:
+  - id: fhir
+    probe: GET https://neomorph.com/wp-json (route index, 432 routes, 23 namespaces)
+    status: 200
+    result: No FHIR base, no /metadata CapabilityStatement, no fhir namespace registered.
+  - id: hl7-v2
+    result: No HL7 v2 message type appears anywhere in the contract.
+  - id: dicom
+    result: No imaging surface.
+  - id: cdisc-odm
+    result: >-
+      No clinical-trial data standard (CDISC ODM/SDTM) surface. NEO-811 trial data is not published
+      through any Neomorph interface; the trial is described in prose on /pipeline/ and in press
+      releases only.
+  note: >-
+    REWARD-ONLY per the 0.12.0 rubric. Neomorph is not penalised for the absence of a domain standard
+    its market does not put on the surface it operates.
+x-evidence:
+  probed: '2026-08-26'
+  host: neomorph.com
+  compliance_claims_found: []
+  certifications_found: []

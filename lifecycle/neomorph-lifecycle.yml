@@ -1,0 +1,75 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live anonymous probes of neomorph.com and its WordPress REST route index on 2026-08-26, plus a
+  search of the public site for a versioning policy, deprecation policy, SLA, status page or changelog.
+note: >-
+  Neomorph runs no developer program, so it publishes no API lifecycle policy of any kind. That is the
+  finding, not an omission in this file. Everything recorded below is either an observed property of
+  the deployment or an explicit "not published" with the probe that established it. No StatusPage or
+  Deprecation pointer is emitted in apis.yml, because there is no status page and no deprecation
+  policy to point at.
+versioning:
+  scheme: namespace-in-path
+  current: wp/v2
+  additional: oembed/1.0
+  policy_published: false
+  detail: >-
+    The version is the namespace segment following /wp-json. Neomorph does not own this contract — it
+    inherits whatever namespace set the installed WordPress core and plugins register. Between the
+    route index and the responses, 23 namespaces were registered on 2026-08-26; the catalogued surface
+    uses two of them. WordPress core has never retired wp/v2, but Neomorph has made no commitment about
+    it, and an unannounced plugin change can add or remove a namespace at any time.
+  breaking_change_notice: none published
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  detail: >-
+    No RFC 8594 Sunset or Deprecation header was returned on any observed response, and no deprecation
+    policy exists on the site. No catalogued operation is marked deprecated in any OpenAPI document in
+    openapi/ — because none is marked deprecated in the deployment's own route descriptors, not because
+    the question was skipped.
+  deprecated_operations: []
+sla:
+  published: false
+  detail: No service-level agreement, uptime target or support commitment is published.
+status_page:
+  published: false
+  url: null
+  probes:
+  - url: https://status.neomorph.com/
+    status: 0
+    detail: DNS does not resolve.
+  - url: https://neomorph.com/status/
+    status: 404
+  detail: >-
+    No status page. The deployment is a single-origin nginx WordPress install behind a caching layer;
+    availability is not reported anywhere a machine can read.
+changelog:
+  published: false
+  detail: >-
+    No API changelog and no release notes. The nearest dated public record of change is the corporate
+    news archive at /news/, which is a press-release feed about the company (financings, partnerships,
+    clinical milestones, appointments) and says nothing about this interface. It is catalogued as the
+    News API and wired as BlogRSS; it is deliberately NOT wired as a ChangeLog pointer, because it is
+    not one.
+  news_archive: https://neomorph.com/news/
+  news_feed: https://neomorph.com/feed/
+observed_stability:
+  detail: >-
+    The content itself is slow-moving and well suited to caching by a consumer: 14 news posts spanning
+    December 2020 to May 2026, 11 publications spanning 2014 to 2022, 15 pages, 19 team members. The
+    most recent content change observed at harvest was 2026-08-06 (media and team objects).
+  first_content: '2014-08-07'
+  latest_content: '2026-08-06'
+maturity:
+  stage: >-
+    Not a product. This is the incidental REST interface of a corporate CMS, not an interface Neomorph
+    offers, supports, versions or intends third parties to build on. Treat any dependency on it as
+    unsupported and subject to silent change.
+x-evidence:
+  probed: '2026-08-26'
+  host: neomorph.com
+  sunset_or_deprecation_headers_observed: []

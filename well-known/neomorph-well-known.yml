@@ -1,0 +1,59 @@
+generated: '2026-08-26'
+method: probed
+source: Direct anonymous HTTP probes of every /.well-known/ path in the enrichment contract, 2026-08-26.
+note: >-
+  Neomorph serves no /.well-known/ documents. Every path below returned 404 with an HTML error page.
+  Two distinct 404 bodies were observed and both are genuine misses, not soft-404s: paths handled by
+  the origin nginx return a bare "Not Found" page, and paths that fall through to WordPress return the
+  themed 404 page. No common[] WellKnown or SecurityTxt pointer is emitted for this provider, because
+  this file records an absence rather than a presence.
+hosts:
+- host: neomorph.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+  - path: /.well-known/mcp
+    status: 404
+    file: null
+other_discovery_surfaces_found:
+- path: /robots.txt
+  status: 200
+  note: >-
+    Served, and permissive — a single WP Defender Disallow of an obfuscated admin path, then an empty
+    Disallow. No agent or crawler is excluded, and /wp-json is not disallowed.
+- path: /sitemap.xml
+  status: 200
+  note: XML sitemap index, served with an XSL stylesheet.
+- path: /wp-json/
+  status: 200
+  note: >-
+    The real machine-readable discovery document on this host — a 649,729-byte WordPress REST route
+    index describing 432 routes across 23 namespaces. Catalogued as the Neomorph Discovery API.
+- path: /feed/
+  status: 200
+  note: RSS 2.0 feed of the news archive.
+x-evidence:
+  probed: '2026-08-26'
+  host: neomorph.com

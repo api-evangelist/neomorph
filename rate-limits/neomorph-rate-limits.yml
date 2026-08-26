@@ -1,0 +1,58 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live anonymous responses from https://neomorph.com/wp-json observed on 2026-08-26, plus a search of
+  neomorph.com for any published limit, quota or fair-use policy.
+limit_count: 0
+note: >-
+  Neomorph publishes no rate limits, and the deployment emits no rate-limit signal. This is an honest
+  zero, not an unchecked field. The full response header set was captured on a live 200 and contains
+  no RateLimit-*, no X-RateLimit-*, no Retry-After and no quota header of any vendor form. There is
+  also no documentation to read: the company runs no developer program, and /developers/, /api/ and
+  /pricing/ all return 404. The practical consequence for an agent is that there is no ceiling it can
+  plan against and no runtime signal it can back off on — it can only be polite. The only structural
+  bound the deployment enforces is per_page <= 100, which is a pagination bound, not a rate limit.
+rate_limits: []
+response_headers:
+  ratelimit_standard: []
+  x_ratelimit: []
+  retry_after: false
+  observed_header_set:
+  - server
+  - date
+  - content-type
+  - vary
+  - x-robots-tag
+  - x-content-type-options
+  - access-control-expose-headers
+  - access-control-allow-headers
+  - x-wp-total
+  - x-wp-totalpages
+  - link
+  - x-cache-enabled
+  - x-cache
+  - x-cache-bypass-reason
+  - alt-svc
+exhaustion_status: null
+structural_bounds:
+- parameter: per_page
+  maximum: 100
+  enforced_by: rest_invalid_param / rest_out_of_bounds at HTTP 400
+  detail: >-
+    A pagination ceiling, not a throughput limit. Recorded here only so it is not mistaken for one.
+edge_protections_observed:
+- detail: >-
+    The site runs WP Defender (a WordPress WAF) — visible in robots.txt and in the HTML 403 returned
+    by /wp/v2/users. WAFs of this class commonly implement lockout on repeated auth failures. No
+    throttling of anonymous reads was observed during this pass, but nothing about the deployment
+    publishes what it would do, so an aggressive crawler should expect an opaque block rather than a
+    429 with a Retry-After.
+x-evidence:
+  probed: '2026-08-26'
+  probe: GET https://neomorph.com/wp-json/wp/v2/posts?per_page=1
+  status: 200
+  docs_probes:
+  - url: https://neomorph.com/developers/
+    status: 404
+  - url: https://neomorph.com/api/
+    status: 404

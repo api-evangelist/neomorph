@@ -1,0 +1,46 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Direct probes of neomorph.com for a pricing, plans or developer-signup surface on 2026-08-26, plus a
+  full read of the site's fifteen published pages via its own Pages API.
+plan_count: 0
+note: >-
+  Neomorph publishes no plans and sells no API access — not gated behind a "contact us", not enterprise
+  -only, simply absent. It is a clinical-stage drug discovery company whose commercial model is
+  pharmaceutical partnership and equity financing, not software licensing: multi-target discovery
+  collaborations with Novo Nordisk (February 2024), Biogen (October 2024) and AbbVie (January 2025),
+  funded by a $109M Series A (December 2020) and a $100M Series B (April 2026). There is no developer
+  program, no signup, no login, no free tier and no metered surface. The content API catalogued in this
+  repo is the incidental REST interface of the corporate website; it is free to read because nobody is
+  selling it, and no plan should be inferred from that. plan_count is 0 as a statement of fact about
+  the company's commercial model, not as a gap.
+plans: []
+pricing_page: null
+signup: null
+free_tier:
+  exists: false
+  detail: >-
+    The catalogued read surface is anonymous and uncharged, but calling that a free tier would imply a
+    paid tier above it. There is none.
+commercial_model:
+  type: pharmaceutical-partnership-and-venture-financing
+  detail: >-
+    Revenue is upfront payments, option fees and milestones under multi-target discovery
+    collaborations, plus venture capital. The AbbVie collaboration announced January 2025 carries
+    future option fees and milestones publicly reported at up to $1.64B. None of this is transacted
+    through, or exposed by, any API.
+x-evidence:
+  probed: '2026-08-26'
+  probes:
+  - url: https://neomorph.com/pricing/
+    status: 404
+  - url: https://neomorph.com/developers/
+    status: 404
+  - url: https://neomorph.com/api/
+    status: 404
+  - url: https://neomorph.com/wp-json/wp/v2/pages?per_page=100
+    status: 200
+    detail: >-
+      All 15 published pages enumerated via the site's own API. The set is About, Platform, Pipeline,
+      NEO-811, Publications, Patients, Careers, News, Contact, home, and the policy pages. No pricing,
+      plans, developer or signup page exists.

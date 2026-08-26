@@ -1,0 +1,157 @@
+generated: '2026-08-26'
+method: probed
+source: >-
+  Live anonymous probes of https://neomorph.com/wp-json on 2026-08-26 (route index, per-route OPTIONS
+  descriptors, and response headers observed on real requests), plus the ten OpenAPI documents in
+  openapi/.
+note: >-
+  Neomorph publishes no developer documentation of any kind, so nothing here is quoted from a docs
+  page. Every convention below was read off the deployment's own route descriptors or observed in a
+  live response header on 2026-08-26. Where WordPress core defines a convention that this deployment
+  simply inherits, that is stated.
+auth_style:
+  anonymous_read: true
+  schemes: []
+  detail: >-
+    No security scheme is declared on any catalogued operation. The site advertises WordPress
+    application passwords over HTTP Basic for its own editors (see authentication/), and accepts
+    X-WP-Nonce for same-origin cookie sessions; neither is offered to third parties.
+pagination:
+  style: page-number
+  params:
+    page: 'Current page of the collection. integer, default 1, minimum 1.'
+    per_page: 'Items per page. integer, default 10, minimum 1, maximum 100. Exceeding 100 returns rest_invalid_param / rest_out_of_bounds.'
+    offset: 'Offset the result set by a specific number of items. integer.'
+  response_headers:
+    X-WP-Total: Total number of items in the collection.
+    X-WP-TotalPages: Total number of pages available at the current per_page.
+  link_header: >-
+    RFC 8288 Link header carrying rel="next" and rel="prev". Observed live:
+    `link: <https://neomorph.com/wp-json/wp/v2/posts?per_page=1&page=2>; rel="next"`.
+  cors_exposure: >-
+    `access-control-expose-headers: X-WP-Total, X-WP-TotalPages, Link` is returned, so a browser client
+    on another origin can read the pagination signal. This is the deployment's most agent-friendly
+    property.
+  detail: >-
+    Cursor pagination is not offered. Deep pagination is bounded in practice only by collection size,
+    which on this deployment is small (largest collection is media at 111).
+filtering_and_shaping:
+  field_selection:
+    param: _fields
+    detail: >-
+      A comma-separated allowlist of response properties, honoured on every collection and item route.
+      This is the sparse-fieldset mechanism and it works anonymously — verified live.
+  embedding:
+    param: _embed
+    detail: >-
+      Inlines linked resources (featured media, terms, author) under `_embedded` instead of leaving
+      them as _links. Reduces round trips.
+  envelope:
+    param: _envelope
+    detail: Wraps body, status and headers into a single JSON object for clients that cannot read headers.
+  search:
+    param: search
+    detail: >-
+      Full-text search within a collection. A cross-collection variant is exposed separately at
+      /wp/v2/search over every publicly queryable type.
+  ordering:
+    params: [order, orderby]
+    detail: >-
+      order is asc|desc; orderby is an enum declared per route in the route descriptor (date, id,
+      include, modified, relevance, slug, title and others depending on collection).
+  date_windows:
+    params: [after, before, modified_after, modified_before]
+    detail: ISO 8601 datetime windows on the create and modify timestamps.
+  inclusion:
+    params: [include, exclude, slug]
+hypermedia:
+  style: HAL-like _links
+  detail: >-
+    Every object carries a `_links` object with self, collection, about, wp:attachment, wp:term and
+    curies entries. This is real, machine-followable link structure and it is present on the anonymous
+    surface — an agent can traverse from a post to its category terms and featured media without
+    constructing a URL.
+  curies_base: https://api.w.org/{rel}
+discovery:
+  index: https://neomorph.com/wp-json/
+  detail: >-
+    The deployment self-describes at its API root: 432 routes across 23 namespaces, each with methods,
+    args and endpoints. Per-route OPTIONS returns the full arg list plus the response JSON Schema.
+    This is why an OpenAPI could be derived here at all.
+  html_head_links:
+  - 'rel="https://api.w.org/" href="https://neomorph.com/wp-json/"'
+  - 'rel="alternate" type="application/json" href="https://neomorph.com/wp-json/wp/v2/pages/42"'
+  - 'rel="alternate" type="application/json+oembed"'
+content_negotiation:
+  request: JSON only. No Accept-based variation offered on the catalogued routes.
+  response_media_type: application/json; charset=UTF-8
+  oembed_formats: [json, xml]
+versioning:
+  scheme: namespace-in-path
+  current: wp/v2
+  detail: >-
+    The version lives in the path segment after /wp-json — `wp/v2` for core content, `oembed/1.0` for
+    oEmbed. Namespaces are additive; WordPress core has never retired wp/v2. Neomorph publishes no
+    versioning policy of its own and does not control this contract — it inherits whatever WordPress
+    core ships when the site is updated.
+error_envelope:
+  format: wp_error
+  rfc9457: false
+  detail: See errors/neomorph-problem-types.yml. Flat {code, message, data.status} JSON, not problem+json.
+rate_limit_signaling:
+  headers: []
+  detail: >-
+    No rate-limit headers of any kind were observed on live responses — no X-RateLimit-*, no
+    RateLimit-*, no Retry-After. See rate-limits/neomorph-rate-limits.yml.
+request_id_tracing:
+  header: null
+  detail: >-
+    No correlation or request-id header is returned. Responses carry only server, date, vary,
+    x-robots-tag, x-content-type-options, the CORS headers, the WP pagination headers, and the
+    origin cache headers x-cache-enabled / x-cache / x-cache-bypass-reason.
+caching:
+  detail: >-
+    Origin-level caching is present and reports itself: `x-cache-enabled: true` with `x-cache: HIT`
+    on HTML. API responses under /wp-json were observed as `x-cache: BYPASS` with
+    `x-cache-bypass-reason: Special url`, i.e. the JSON surface is deliberately not edge-cached.
+    No ETag or Last-Modified is returned on the catalogued routes, so conditional requests are not
+    available.
+  robots: '`x-robots-tag: noindex` is returned on API responses.'
+idempotency:
+  supported: na
+  detail: >-
+    Not applicable. The anonymous surface is read-only — every catalogued operation is a GET, and GET
+    is idempotent by definition. No idempotency key mechanism exists on this deployment, and none is
+    needed for the surface a third party can reach. No Idempotency common[] pointer is emitted.
+dry_run_mode:
+  supported: na
+  detail: Not applicable — no write surface is reachable anonymously.
+reversibility:
+  grade: na
+  write_surface: false
+  detail: >-
+    Not applicable, and this is a genuine `na` rather than a zero. Every operation an unauthenticated
+    client can perform against neomorph.com/wp-json is a GET against a content collection. There is no
+    create, update, delete, cancel, refund, void or restore an agent could take, and therefore nothing
+    to take back. The deployment's write routes exist (POST/PUT/PATCH/DELETE across the wp/v2 and
+    plugin namespaces) but every one of them requires a WordPress credential Neomorph does not issue
+    to third parties; they were not exercised and are not catalogued.
+  reversal_operations: []
+  windows: []
+cross_references:
+  errors: errors/neomorph-problem-types.yml
+  lifecycle: lifecycle/neomorph-lifecycle.yml
+  authentication: authentication/neomorph-authentication.yml
+  rate_limits: rate-limits/neomorph-rate-limits.yml
+  data_model: data-model/neomorph-data-model.yml
+x-evidence:
+  probed: '2026-08-26'
+  host: neomorph.com
+  observed_headers:
+  - 'access-control-expose-headers: X-WP-Total, X-WP-TotalPages, Link'
+  - 'access-control-allow-headers: Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type'
+  - 'x-wp-total: 14'
+  - 'x-wp-totalpages: 14'
+  - 'x-robots-tag: noindex'
+  - 'x-cache: BYPASS'
+  - 'x-cache-bypass-reason: Special url'
