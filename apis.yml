@@ -54,29 +54,6 @@ tags_raw:
 - life-sciences
 - content-api
 apis:
-- aid: neomorph:neomorph-news-api
-  name: Neomorph News API
-  description: >-
-    News archive — Neomorph press releases and media coverage (14 published at harvest time, spanning
-    the December 2020 $109M Series A through the May 2026 appointment of Robert J. Hugin as Chairman
-    of the Board).
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://neomorph.com/wp-json
-  tags:
-  - Posts
-  tags_raw:
-  - posts
-  properties:
-  - type: OpenAPI
-    url: openapi/neomorph-news-api-openapi.yml
-  - type: Authentication
-    url: authentication/neomorph-authentication.yml
-  - type: ErrorCatalog
-    url: errors/neomorph-problem-types.yml
-  - type: Conventions
-    url: conventions/neomorph-conventions.yml
-  - type: DataModel
-    url: data-model/neomorph-data-model.yml
 - aid: neomorph:neomorph-pages-api
   name: Neomorph Pages API
   description: >-
@@ -125,8 +102,8 @@ apis:
 - aid: neomorph:neomorph-team-api
   name: Neomorph Team API
   description: >-
-    Team custom post type and its team_category taxonomy — management, board of directors and
-    scientific founders (19 people across 4 registered categories at harvest time).
+    Team custom post type and its team_category taxonomy — management, board of directors and scientific
+    founders (19 people across 4 registered categories at harvest time).
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://neomorph.com/wp-json
   tags:
@@ -166,33 +143,11 @@ apis:
     url: conventions/neomorph-conventions.yml
   - type: DataModel
     url: data-model/neomorph-data-model.yml
-- aid: neomorph:neomorph-taxonomy-api
-  name: Neomorph Taxonomy API
-  description: >-
-    News categories and tags. Two category terms are registered (Press Release, In The Media); the
-    post_tag taxonomy is registered but empty.
-  humanURL: https://developer.wordpress.org/rest-api/
-  baseURL: https://neomorph.com/wp-json
-  tags:
-  - Taxonomy
-  tags_raw:
-  - taxonomy
-  properties:
-  - type: OpenAPI
-    url: openapi/neomorph-taxonomy-api-openapi.yml
-  - type: Authentication
-    url: authentication/neomorph-authentication.yml
-  - type: ErrorCatalog
-    url: errors/neomorph-problem-types.yml
-  - type: Conventions
-    url: conventions/neomorph-conventions.yml
-  - type: DataModel
-    url: data-model/neomorph-data-model.yml
 - aid: neomorph:neomorph-comments-api
   name: Neomorph Comments API
   description: >-
-    Comment collection. Registered and anonymously reachable, but empty — no post on this deployment
-    carries comments.
+    Comment collection. Registered and anonymously reachable, but empty — no post on this deployment carries
+    comments.
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://neomorph.com/wp-json
   tags:
@@ -213,8 +168,8 @@ apis:
 - aid: neomorph:neomorph-search-api
   name: Neomorph Search API
   description: >-
-    Cross-content search across every publicly queryable object type on the deployment (post, page,
-    team, resource).
+    Cross-content search across every publicly queryable object type on the deployment (post, page, team,
+    resource).
   humanURL: https://developer.wordpress.org/rest-api/
   baseURL: https://neomorph.com/wp-json
   tags:
@@ -266,6 +221,87 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/neomorph-oembed-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-categories-api
+  name: Neomorph Categories API
+  description: >-
+    News taxonomy. Two terms are registered on this deployment: Press Release (13 posts) and In The Media
+    (1 post).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Categories
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-categories-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-posts-api
+  name: Neomorph Posts API
+  description: >-
+    News archive - Neomorph press releases and media coverage (14 published at harvest time, spanning
+    the December 2020 $109M Series A through the May 2026 appointment of Robert J. Hugin as Chairman of
+    the Board).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Posts
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-posts-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-tags-api
+  name: Neomorph Tags API
+  description: >-
+    The post_tag taxonomy is registered and anonymously reachable but empty - no term has been created
+    on this deployment.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Tags
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-tags-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-team-categories-api
+  name: Neomorph Team Categories API
+  description: >-
+    team_category taxonomy grouping the Team collection. Four terms are registered: Management (11), Board
+    of Directors (7), Scientific Founders (4) and Scientific Advisory Board (0).
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - Team Categories
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-team-categories-api-openapi.yml
   - type: Authentication
     url: authentication/neomorph-authentication.yml
   - type: ErrorCatalog
