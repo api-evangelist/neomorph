@@ -18,6 +18,18 @@ description: >-
   developer program and publishes no product API, developer portal, API reference, SDK or pricing.
   The only machine-readable surface reachable without credentials is the WordPress REST content API
   behind neomorph.com, catalogued here.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://neomorph.com/wp-content/uploads/2026/03/OG-Neomorph.png
 url: https://raw.githubusercontent.com/api-evangelist/neomorph/refs/heads/main/apis.yml
 x-type: company
