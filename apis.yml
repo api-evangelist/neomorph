@@ -235,26 +235,6 @@ apis:
     url: conventions/neomorph-conventions.yml
   - type: DataModel
     url: data-model/neomorph-data-model.yml
-- aid: neomorph:neomorph-oembed-api
-  name: Neomorph oEmbed API
-  description: oEmbed 1.0 provider endpoint for neomorph.com permalinks.
-  humanURL: https://oembed.com/
-  baseURL: https://neomorph.com/wp-json
-  tags:
-  - oEmbed
-  tags_raw:
-  - oembed
-  properties:
-  - type: OpenAPI
-    url: openapi/neomorph-oembed-api-openapi.yml
-  - type: Authentication
-    url: authentication/neomorph-authentication.yml
-  - type: ErrorCatalog
-    url: errors/neomorph-problem-types.yml
-  - type: Conventions
-    url: conventions/neomorph-conventions.yml
-  - type: DataModel
-    url: data-model/neomorph-data-model.yml
 - aid: neomorph:neomorph-categories-api
   name: Neomorph Categories API
   description: >-
@@ -328,6 +308,24 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/neomorph-team-categories-api-openapi.yml
+  - type: Authentication
+    url: authentication/neomorph-authentication.yml
+  - type: ErrorCatalog
+    url: errors/neomorph-problem-types.yml
+  - type: Conventions
+    url: conventions/neomorph-conventions.yml
+  - type: DataModel
+    url: data-model/neomorph-data-model.yml
+- aid: neomorph:neomorph-o-embed-api
+  name: Neomorph o Embed API
+  description: oEmbed 1.0 provider endpoint for neomorph.com URLs. Verified anonymously on 2026-08-26.
+  humanURL: https://developer.wordpress.org/rest-api/
+  baseURL: https://neomorph.com/wp-json
+  tags:
+  - o Embed
+  properties:
+  - type: OpenAPI
+    url: openapi/neomorph-o-embed-api-openapi.yml
   - type: Authentication
     url: authentication/neomorph-authentication.yml
   - type: ErrorCatalog
