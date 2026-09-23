@@ -1,0 +1,52 @@
+{
+  "provider": "neomorph",
+  "sources": [
+    "_original/neomorph-news-api-openapi.yml",
+    "_original/neomorph-taxonomy-api-openapi.yml",
+    "neomorph-comments-api-openapi.yml",
+    "neomorph-discovery-api-openapi.yml",
+    "neomorph-media-api-openapi.yml",
+    "neomorph-o-embed-api-openapi.yml",
+    "neomorph-pages-api-openapi.yml",
+    "neomorph-publications-api-openapi.yml",
+    "neomorph-search-api-openapi.yml",
+    "neomorph-team-api-openapi.yml",
+    "neomorph-team-categories-api-openapi.yml"
+  ],
+  "outputs": [
+    "neomorph-posts-api-openapi.yml",
+    "neomorph-categories-api-openapi.yml",
+    "neomorph-tags-api-openapi.yml",
+    "neomorph-comments-api-openapi.yml",
+    "neomorph-discovery-api-openapi.yml",
+    "neomorph-media-api-openapi.yml",
+    "neomorph-o-embed-api-openapi.yml",
+    "neomorph-pages-api-openapi.yml",
+    "neomorph-publications-api-openapi.yml",
+    "neomorph-search-api-openapi.yml",
+    "neomorph-team-api-openapi.yml",
+    "neomorph-team-categories-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [
+    "neomorph-comments-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/comments get, /wp/v2/comments/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-discovery-api-openapi.yml: previously refined output kept for 4 operation(s) no archived document covers (e.g. / get, /wp/v2/statuses get, /wp/v2/taxonomies get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-media-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/media get, /wp/v2/media/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-o-embed-api-openapi.yml: previously refined output kept for 1 operation(s) no archived document covers (e.g. /oembed/1.0/embed get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-pages-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/pages get, /wp/v2/pages/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-publications-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/resource get, /wp/v2/resource/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-search-api-openapi.yml: previously refined output kept for 1 operation(s) no archived document covers (e.g. /wp/v2/search get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-team-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/team get, /wp/v2/team/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth.",
+    "neomorph-team-categories-api-openapi.yml: previously refined output kept for 2 operation(s) no archived document covers (e.g. /wp/v2/team_category get, /wp/v2/team_category/{id} get); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth."
+  ],
+  "notes": [
+    "sourced from openapi/_original/ (2 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "neomorph-categories-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "neomorph-posts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "neomorph-tags-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

@@ -3,7 +3,7 @@ info:
   title: Neomorph Team Team Categories API
   version: wp/v2
   summary: Anonymously readable WordPress REST content API behind neomorph.com.
-  description: The read-only content surface Neomorph exposes at https://neomorph.com/wp-json. Neomorph, Inc. is a venture-backed, clinical-stage biotechnology company at 5590 Morehouse Drive in San Diego, California, founded in 2020 to design molecular glue degraders that reshape E3 ubiquitin ligases into neomorphic surfaces and eliminate previously undruggable proteins. It runs no developer program and markets no product API. This document is an API Evangelist derivation of the WordPress `wp/v2` and `oembed/1.0` routes the site publishes, restricted to the operations verified to return data anonymously on 2026-08-26. See x-api-evangelist-provenance.
+  description: The read-only content surface Neomorph exposes at https://neomorph.com/wp-json.
   contact:
     name: Neomorph, Inc.
     url: https://neomorph.com/contact/
@@ -186,14 +186,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    InvalidParam:
-      description: Invalid parameter. Returns `rest_invalid_param` with a per-parameter breakdown in `data.params`.
+    Unauthorized:
+      description: 'Authentication required. Returns `rest_forbidden` (or a route-specific slug) with `data.status: 401`.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: 'Authentication required. Returns `rest_forbidden` (or a route-specific slug) with `data.status: 401`.'
+    InvalidParam:
+      description: Invalid parameter. Returns `rest_invalid_param` with a per-parameter breakdown in `data.params`.
       content:
         application/json:
           schema:
